@@ -60,7 +60,7 @@
   },
   "browserslist": "> 0.25%, not dead",
   "dependencies": {
-    "qs": "^6.8.0"
+    "qs": "^6.9.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
