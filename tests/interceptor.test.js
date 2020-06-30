@@ -13,12 +13,35 @@ describe('interceptor', function () {
         access_token: 'foo',
         expires_in: 0
       });
-      const newRequest = await interceptor(tokenProvider, authenticate)({
+      const newRequest = await interceptor(
+        tokenProvider,
+        authenticate
+      )({
         headers: {}
       });
       assert.deepStrictEqual(newRequest, {
         headers: {
           Authorization: 'Bearer foo'
+        }
+      });
+    });
+
+    it('should set the oauth access token in the request custom header without the bearer scheme', async function () {
+      const authenticate = async () => ({
+        access_token: 'foo',
+        expires_in: 0
+      });
+      const newRequest = await interceptor(
+        tokenProvider,
+        authenticate,
+        'Custom-Header',
+        (res) => res.access_token
+      )({
+        headers: {}
+      });
+      assert.deepStrictEqual(newRequest, {
+        headers: {
+          'Custom-Header': 'foo'
         }
       });
     });
@@ -40,11 +63,7 @@ describe('interceptor', function () {
       const requestInterceptor = interceptor(tokenProvider, authenticate);
 
       function test3x (req) {
-        return Promise.all([
-          requestInterceptor(req),
-          requestInterceptor(req),
-          requestInterceptor(req)
-        ]);
+        return Promise.all([requestInterceptor(req), requestInterceptor(req), requestInterceptor(req)]);
       }
 
       function verify (results, expected) {
