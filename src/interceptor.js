@@ -6,7 +6,11 @@ function headerFormatter (res) {
   return 'Bearer ' + res.access_token;
 }
 
-module.exports = function (tokenProvider, authenticate) {
+module.exports = function (tokenProvider, authenticate, header, customHeaderFormatter) {
   const getToken = tokenProvider.tokenCache(authenticate, { getMaxAge });
-  return tokenProvider({ getToken, headerFormatter });
+  return tokenProvider({
+    getToken,
+    headerFormatter: customHeaderFormatter || headerFormatter,
+    header
+  });
 };
